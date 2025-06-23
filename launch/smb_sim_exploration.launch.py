@@ -21,7 +21,7 @@ def generate_launch_description():
         ),
         DeclareLaunchArgument(
             'use_ground_truth',
-            default_value='true',
+            default_value='false',
             description='Use ground truth odometry (true/false). If false, launches DLIO.'
         ),
         DeclareLaunchArgument(
@@ -68,6 +68,29 @@ def generate_launch_description():
         name="smb_low_level_controller_gazebo_node",
         output="screen",
         parameters=[{"use_sim_time": use_sim_time}],
+    )
+
+    # gmsf_launch = IncludeLaunchDescription(
+    #     PythonLaunchDescriptionSource(
+    #         PathJoinSubstitution([
+    #             FindPackageShare("smb_estimator_graph_ros2"),
+    #             "launch",
+    #             "smb_estimator_graph_sim.launch.py"
+    #         ])
+    #     ),
+    # )
+
+    open3d_slam_launch = IncludeLaunchDescription(
+        PythonLaunchDescriptionSource(
+            PathJoinSubstitution([
+                FindPackageShare("open3d_slam_ros"),
+                "launch",
+                "summer_school_slam_robot_launch.py"
+            ])
+        ),
+        launch_arguments={
+            "use_sim_time": "true"
+        }.items(),
     )
 
     terrain_analysis_launch = IncludeLaunchDescription(
@@ -199,6 +222,8 @@ def generate_launch_description():
         terrain_analysis_launch,
         terrain_analysis_ext_launch,
         dlio_launch,
+        #gmsf_launch,
+        open3d_slam_launch,
         relay_odom_to_dlio,
         local_odometry,
         static_tf_map_to_odom,
