@@ -139,18 +139,18 @@ def generate_launch_description():
     #         output="screen",
     #     )
     # ], condition=IfCondition(LaunchConfiguration("launch_rgb_cam")))
-    rgb_camera_group = GroupAction([
-        IncludeLaunchDescription(
-            PythonLaunchDescriptionSource(
-                PathJoinSubstitution([
-                    FindPackageShare("smb_bringup"), "launch", "rgb_camera_driver.launch.py"
-                ])
-            ),
-            launch_arguments={
-                'serial': "'20010195'" # for Jetson only
-            }.items()
-        )
-    ], condition=IfCondition(LaunchConfiguration("launch_rgb_cam")))
+    # rgb_camera_group = GroupAction([
+    #     IncludeLaunchDescription(
+    #         PythonLaunchDescriptionSource(
+    #             PathJoinSubstitution([
+    #                 FindPackageShare("smb_bringup"), "launch", "rgb_camera_driver.launch.py"
+    #             ])
+    #         ),
+    #         launch_arguments={
+    #             'serial': "'20010195'" # for Jetson only
+    #         }.items()
+    #     )
+    # ], condition=IfCondition(LaunchConfiguration("launch_rgb_cam")))
 
     # # Power Status
     # power_status_group = GroupAction([
@@ -183,8 +183,8 @@ def generate_launch_description():
             # tracking_camera_group,
             # depth_camera_group,
             # imu_interface_group,
-            rgb_camera_group,
+            #rgb_camera_group,
             # power_status_group,
-            # rviz_group,
+            #rviz_group
         ]
     )

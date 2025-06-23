@@ -70,20 +70,30 @@ def generate_launch_description():
         parameters=[{"use_sim_time": use_sim_time}],
     )
 
-    terrain_analysis = Node(
-        package="terrain_analysis",
-        executable="terrainAnalysis",
-        name="terrainAnalysis",
-        output="screen",
-        parameters=[{"use_sim_time": use_sim_time}],
+    terrain_analysis_launch = IncludeLaunchDescription(
+        FrontendLaunchDescriptionSource([
+            PathJoinSubstitution([
+                FindPackageShare("terrain_analysis"),
+                "launch",
+                "terrain_analysis.launch"
+            ])
+        ]),
+        launch_arguments={
+            "use_sim_time": use_sim_time
+        }.items(),
     )
 
-    terrain_analysis_ext = Node(
-        package="terrain_analysis_ext",
-        executable="terrainAnalysisExt",
-        name="terrainAnalysisExt",
-        output="screen",
-        parameters=[{"use_sim_time": use_sim_time}],
+    terrain_analysis_ext_launch = IncludeLaunchDescription(
+        FrontendLaunchDescriptionSource([
+            PathJoinSubstitution([
+                FindPackageShare("terrain_analysis_ext"),
+                "launch",
+                "terrain_analysis_ext.launch"
+            ])
+        ]),
+        launch_arguments={
+            "use_sim_time": use_sim_time
+        }.items(),
     )
 
     dlio_launch = IncludeLaunchDescription(
@@ -134,11 +144,11 @@ def generate_launch_description():
     )
     
     local_planner_launch = IncludeLaunchDescription(
-        PythonLaunchDescriptionSource([
+        FrontendLaunchDescriptionSource([
             PathJoinSubstitution([
                 FindPackageShare("local_planner"),
                 "launch",
-                "local_planner.launch.py"
+                "local_planner.launch"
             ])
         ]),
         launch_arguments={
@@ -186,8 +196,8 @@ def generate_launch_description():
         gazebo_launch,
         kinematics_controller,
         low_level_controller,
-        terrain_analysis,
-        terrain_analysis_ext,
+        terrain_analysis_launch,
+        terrain_analysis_ext_launch,
         dlio_launch,
         relay_odom_to_dlio,
         local_odometry,

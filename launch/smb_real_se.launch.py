@@ -16,7 +16,7 @@ def generate_launch_description():
     launch_args = [
         DeclareLaunchArgument(
             'use_sim_time',
-            default_value='true',
+            default_value='false',
             description='Use simulation (Gazebo) clock if true'
         ),
         DeclareLaunchArgument(
@@ -33,7 +33,7 @@ def generate_launch_description():
         executable="smb_kinematics_node",
         name="smb_kinematics_node",
         output="screen",
-        parameters=[{"use_sim_time": True}],
+        parameters=[{"use_sim_time": False}],
     )
 
     low_level_controller = Node(
@@ -41,7 +41,17 @@ def generate_launch_description():
         executable="speed_control_node",
         name="speed_control_node",
         output="screen",
-        parameters=[{"use_sim_time": True}],
+        parameters=[{"use_sim_time": False}],
+    )
+
+    sensor_launch = IncludeLaunchDescription(   
+        PythonLaunchDescriptionSource(
+            PathJoinSubstitution([
+                FindPackageShare("smb_bringup"),
+                "launch",
+                "sensors.launch.py"
+            ])
+        ),          
     )
 
     gmsf_launch = IncludeLaunchDescription(
@@ -49,7 +59,7 @@ def generate_launch_description():
             PathJoinSubstitution([
                 FindPackageShare("smb_estimator_graph_ros2"),
                 "launch",
-                "smb_estimator_graph_sim.launch.py"
+                "smb_estimator_graph.launch.py"
             ])
         ),
     )
@@ -63,7 +73,7 @@ def generate_launch_description():
             ])
         ),
         launch_arguments={
-            "use_sim_time": "true"
+            "use_sim_time": "false"
         }.items(),
     )
 
@@ -72,7 +82,7 @@ def generate_launch_description():
             PathJoinSubstitution([
                 FindPackageShare("smb_ui"),
                 "launch",
-                "smb_ui_sim.launch.py"
+                "smb_ui_real.launch.py"
             ])
         ),
     )
@@ -93,6 +103,7 @@ def generate_launch_description():
         kinematics_controller,
         low_level_controller,
         gmsf_launch,
+        sensor_launch,
         open3d_slam_launch,
         smb_ui
     ])
