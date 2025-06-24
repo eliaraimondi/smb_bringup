@@ -214,15 +214,15 @@ def generate_launch_description():
             LaunchConfiguration('config_topics')]
     )
 
-    smb_ui = IncludeLaunchDescription(
-        PythonLaunchDescriptionSource(
-            PathJoinSubstitution([
-                FindPackageShare("smb_ui"),
-                "launch",
-                "smb_ui_sim.launch.py"
-            ])
-        ),
-    )
+    # smb_ui = IncludeLaunchDescription(
+    #     PythonLaunchDescriptionSource(
+    #         PathJoinSubstitution([
+    #             FindPackageShare("smb_ui"),
+    #             "launch",
+    #             "smb_ui_sim.launch.py"
+    #         ])
+    #     ),
+    # )
     
     return LaunchDescription([
         *launch_args,
@@ -242,5 +242,5 @@ def generate_launch_description():
         twist_pid,
         twist_mux,
         rviz2,
-        smb_ui
+
     ])
