@@ -21,7 +21,7 @@ def generate_launch_description():
         ),
         DeclareLaunchArgument(
             'use_ground_truth',
-            default_value='false',
+            default_value='true',
             description='Use ground truth odometry (true/false). If false, launches DLIO.'
         ),
         DeclareLaunchArgument(
