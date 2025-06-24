@@ -19,10 +19,11 @@ from launch import LaunchDescription
 from launch.actions import DeclareLaunchArgument as LaunchArg
 from launch.actions import OpaqueFunction
 from launch.substitutions import LaunchConfiguration as LaunchConfig
-from launch.substitutions import PathJoinSubstitution
+from launch.substitutions import PathJoinSubstitution, PythonExpression
 from launch_ros.actions import Node
 from launch_ros.substitutions import FindPackageShare
 
+import os
 
 blackfly_s_param = {
     'debug': False,
@@ -31,7 +32,8 @@ blackfly_s_param = {
     'dump_node_map': False,
     # set parameters defined in blackfly_s.yaml
     'gain_auto': 'Continuous',
-    'pixel_format': 'BayerRG8',
+    # 'pixel_format': 'BayerRG8',
+    'pixel_format': 'RGB8',
     'exposure_auto': 'Continuous',
     # to use a user set, do this:
     # 'user_set_selector': 'UserSet0',
@@ -67,6 +69,13 @@ def launch_setup(context, *args, **kwargs):
     """Launch camera driver node."""
     parameter_file = LaunchConfig('parameter_file').perform(context)
     camera_type = LaunchConfig('camera_type').perform(context)
+    robot_id = os.environ.get('ROBOT_ID', 'sim')
+    calibration_file = PathJoinSubstitution(
+        [FindPackageShare('smb_bringup'), 'config', 'smb' + robot_id + '_cam0.yaml']
+    )
+    
+    calibration_file_url = 'file://' + calibration_file.perform(context)
+    
     if not parameter_file:
         parameter_file = PathJoinSubstitution(
             [FindPackageShare('spinnaker_camera_driver'), 'config', camera_type + '.yaml']
@@ -82,6 +91,7 @@ def launch_setup(context, *args, **kwargs):
                 'ffmpeg_image_transport.encoding': 'hevc_nvenc',
                 'parameter_file': parameter_file,
                 'serial_number': [LaunchConfig('serial')],
+                'camerainfo_url': calibration_file_url,
             },
         ],
         remappings=[
@@ -98,7 +108,7 @@ def generate_launch_description():
         [
             LaunchArg(
                 'camera_name',
-                default_value=['flir_camera'],
+                default_value=['rgb_camera'],
                 description='camera name (ros node name)',
             ),
             LaunchArg(
